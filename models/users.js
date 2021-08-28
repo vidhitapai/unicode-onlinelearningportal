@@ -5,11 +5,11 @@ const userSchema = new mongoose.Schema({
     name: String,
     userType: String,
     email: String,
-    isEnrolled: Boolean
+    enrolledIn: [String],
+    coursesCreated: [String]
 });
 
-const Student = mongoose.model('Student', userSchema);
-const Instructor = mongoose.model('Instructor', userSchema);
+const User = mongoose.model('User', userSchema);
 
 module.exports = Student;
 module.exports = Instructor;
