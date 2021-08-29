@@ -11,5 +11,4 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = Student;
-module.exports = Instructor;
+module.exports = User;
