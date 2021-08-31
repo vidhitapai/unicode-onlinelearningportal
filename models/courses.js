@@ -1,13 +1,25 @@
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
-    id: Number,
-    name: String,
-    instructor: String,
+    name: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    instructor: {
+        type: String,
+        required: true
+    },
     rating: Number,
-    type: String,
-    uploadDate: String,
-    enrolled: Number
+    courseType: {
+        type: String,
+        required: true
+    },
+    uploadDate: Date,
+    enrolled: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }
 });
 
 const Course = mongoose.model('Course', schema);
