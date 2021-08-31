@@ -18,11 +18,19 @@ const user_create = async (req,res) => {
 
 const user_delete = async (req, res) => {
     try {
-        await req.user.remove()
-        res.status(201).json({
-            message: "User successfully deleted!",
-            data: req.user
-        });
+        const email = req.body;
+        const user = await User.findOneAndDelete({email});
+        if (!email) {
+            res.status(401).json ({
+                message: "User not found!"
+            });
+        }
+        else if (email) {
+            res.status(201).json({
+                message: "User successfully deleted!",
+                data: req.user
+            });
+        }   
     }
     catch(err) {
         res.status(400).json({

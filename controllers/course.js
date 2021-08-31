@@ -18,11 +18,19 @@ const course_create = async (req,res) => {
 
 const course_delete = async (req, res) => {
     try {
-        await req.course.remove()
-        res.status(201).json({
-            message: "Course successfully deleted!",
-            data: req.course
-        });
+        const name = req.body;
+        const course = await Course.findOneAndDelete({name});
+        if (!course) {
+            res.status(401).json ({
+                message: "Course not found!"
+            });
+        }
+        else if (course) {
+            res.status(201).json({
+                message: "Course successfully deleted!",
+                data: req.name
+            });
+        }
     }
     catch(err) {
         res.status(400).json({
