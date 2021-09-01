@@ -40,7 +40,7 @@ const user_delete = async (req, res) => {
 
 const user_view = async (req, res) => {
     try {
-        const viewUser = await User.find({email: req.params.email});
+        const viewUser = await User.find({});
         if (viewUser.length == 0) {
             res.status(404).json({
                 message: "User not found!"

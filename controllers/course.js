@@ -40,7 +40,7 @@ const course_delete = async (req, res) => {
 
 const course_view = async (req, res) => {
     try {
-        const viewCourse = await Course.find({name: req.params.name});
+        const viewCourse = await Course.find({});
         if (viewCourse.length == 0) {
             res.status(404).json({
                 message: "Course not found!"
