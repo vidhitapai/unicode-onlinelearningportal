@@ -4,7 +4,8 @@ const schema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        trim: true
     },
     instructor: {
         type: String,
@@ -13,12 +14,13 @@ const schema = new mongoose.Schema({
     rating: Number,
     courseType: {
         type: String,
-        required: true
+        //required: true
     },
     uploadDate: Date,
     enrolled: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User',
+        default: []
     }
 });
 

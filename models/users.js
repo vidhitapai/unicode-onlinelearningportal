@@ -27,10 +27,14 @@ const userSchema = new mongoose.Schema({
         maxLength: 15
     },
     enrolledIn: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course'
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Course',
+        default: []
     },
-    coursesCreated: [String]
+    coursesCreated: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Course'
+    }
 });
 
 const User = mongoose.model('User', userSchema);
