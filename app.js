@@ -8,6 +8,8 @@ const userRouter = require('./routers/userRoutes');
 // use port 3000 unless there exists a preconfigured port
 const port = process.env.PORT || 3000;
 
+app.use(express.json());
+
 //course routes
 app.use('/courses', courseRouter);
 app.use('/users', userRouter);
