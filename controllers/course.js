@@ -40,7 +40,7 @@ const course_delete = async (req, res) => {
 
 const course_view = async (req, res) => {
     try {
-        const viewCourse = await Course.find({});
+        const viewCourse = await Course.find({}).populate('enrolled');
         if (viewCourse.length == 0) {
             res.status(404).json({
                 message: "Course not found!"
@@ -62,7 +62,7 @@ const course_view = async (req, res) => {
 
 const course_viewByName = async (req, res) => {
     try {
-        const courseByName = await Course.find({name: req.params.name});
+        const courseByName = await Course.find({name: req.params.name}).populate('enrolled');
         if (courseByName.length == 0) {
             res.status(404).json({
                 message: "Course not found!"
@@ -84,7 +84,7 @@ const course_viewByName = async (req, res) => {
 
 const course_viewByInstructor = async (req, res) => {
     try {
-        const courseByInstructor = await Course.find({instructor: req.params.instructor});
+        const courseByInstructor = await Course.find({instructor: req.params.instructor}).populate('enrolled');
         if (courseByInstructor.length == 0) {
             res.status(404).json({
                 message: "Course not found!"
