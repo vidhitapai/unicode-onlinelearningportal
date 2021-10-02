@@ -58,6 +58,17 @@ userSchema.methods.generateAuthToken = async function () {
     return token;
 }
 
+//displaying only public profile to user by hiding private data
+userSchema.methods.toJSON = function () {
+    const user = this;
+    const userDisplayObject = user.toObject();
+
+    delete userDisplayObject.password;
+    delete userDisplayObject.tokens;
+
+    return userObject;
+}
+
 //checking the credentials before logging in, accessible on models
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({email: email});
