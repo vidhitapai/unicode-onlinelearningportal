@@ -28,6 +28,30 @@ const user_login = async (req, res) => {
     }
 };
 
+const user_logout = async (req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter((token) => {
+            return token.token !== req.token
+        })
+        await req.user.save();
+        res.send('Successfully logged out!');
+    }
+    catch (err) {
+        res.status(500),send();
+    }
+};
+
+const user_logoutOfAll = async (req, res) => {
+    try {
+        req.user.tokens = [];
+        await req.user.save();
+        res.send('Successfully logged out of all sessions!');
+    }
+    catch (err) {
+        res.status(500).send();
+    }
+};
+
 const user_delete = async (req, res) => {
     try {
         const user = await User.findOneAndDelete({email: req.params.email});
@@ -50,26 +74,31 @@ const user_delete = async (req, res) => {
     }
 };
 
+// const user_view = async (req, res) => {
+//     try {
+//         const viewUser = await User.find({}).populate('enrolledIn', 'coursesCreated');
+//         if (viewUser.length == 0) {
+//             res.status(404).json({
+//                 message: "User not found!"
+//             });
+//         }
+//         else {
+//             res.status(200).json({
+//                 message: "User found!",
+//                 data: viewUser
+//             });
+//         } 
+//     }
+//     catch(err) {
+//         res.status(400).json({
+//             message: err.message
+//         });
+//     }
+// };
+
+//displaying authenticated user's profile
 const user_view = async (req, res) => {
-    try {
-        const viewUser = await User.find({}).populate('enrolledIn', 'coursesCreated');
-        if (viewUser.length == 0) {
-            res.status(404).json({
-                message: "User not found!"
-            });
-        }
-        else {
-            res.status(200).json({
-                message: "User found!",
-                data: viewUser
-            });
-        } 
-    }
-    catch(err) {
-        res.status(400).json({
-            message: err.message
-        });
-    }
+    res.send(req.user);
 };
 
 const user_viewByName = async (req, res) => {
@@ -158,6 +187,8 @@ const user_update = async (req, res) => {
 module.exports = {
     user_create,
     user_login,
+    user_logout,
+    user_logoutOfAll,
     user_delete,
     user_view,
     user_viewByName,
