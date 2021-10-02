@@ -1,9 +1,10 @@
 const User = require('../models/users');
 
-const user_create = async (req,res) => {
+const user_create = async (req, res) => {
     const user = new User(req.body);
     try {
         await user.save();
+        const token = await user.generateAuthToken();
         res.status(201).json({
             message:"User successfully created!",
             data: user
@@ -13,6 +14,17 @@ const user_create = async (req,res) => {
         res.status(400).json({
             message: err.message
         });
+    }
+};
+
+const user_login = async (req, res) => {
+    try {
+        const user = await user.findByCredentials(req.body.email, req.body.password)
+        const token = await generateAuthToken();
+        res.send({ user, token });
+    }
+    catch(err) {
+        res.status(400).send()
     }
 };
 
@@ -120,6 +132,8 @@ const user_viewByType_instructor = async (req, res) => {
 };
 
 const user_update = async (req, res) => {
+    
+    
     try {
         const user = await User.findOneAndUpdate({email: req.params.email}, req.body, {new: true});
         if (!user) {
@@ -143,6 +157,7 @@ const user_update = async (req, res) => {
 
 module.exports = {
     user_create,
+    user_login,
     user_delete,
     user_view,
     user_viewByName,
