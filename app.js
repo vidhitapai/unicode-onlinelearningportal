@@ -1,6 +1,10 @@
 const express = require('express');
 const app = express();
 require('./connection');
+// const dotenv = require("dotenv");
+
+// accessing the environment variables
+// dotenv.config();
 
 const courseRouter = require('./routers/courseRoutes');
 const userRouter = require('./routers/userRoutes');
@@ -10,7 +14,7 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-//course routes
+//import routes
 app.use('/courses', courseRouter);
 app.use('/users', userRouter);
 
