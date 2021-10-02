@@ -16,7 +16,10 @@ const schema = new mongoose.Schema({
         type: String,
         //required: true
     },
-    uploadDate: Date,
+    uploadDate: {
+        type: Date,
+        default: Date.now(),
+    },
     enrolled: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'User',
