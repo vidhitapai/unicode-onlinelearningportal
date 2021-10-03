@@ -53,21 +53,21 @@ const user_logoutOfAll = async (req, res) => {
 };
 
 const user_update = async (req, res) => {
-    
+    const updates = Object.keys(req.body);
+    const allowedToUpdate = ['name', 'email', 'password', 'userType', 'enrolledIn', 'coursesCreated'];
+    const isValid = updates.every((update) => allowedToUpdate.includes(update));
+
+    if (!isValid) {
+        return res.status(400).send('Invalid updates!');
+    }
     
     try {
-        //const user = await User.findOneAndUpdate(req.user);
-        if (!req.user) {
-            res.status(404).json({
-                message: "User not found!"
-            });
-        }
-        else if (req.user) {
-            res.status(200).json({
-                message: "User found!",
-                data: req.user
-            });
-        }
+        updates.forEach((update) => req.user[update] = req.body[update]);
+        await req.user.save();
+        res.status(200).json({
+            message: 'User details updated successfully!',
+            data: req.user
+        });
     }
     catch(err) {
         res.status(400).json({
