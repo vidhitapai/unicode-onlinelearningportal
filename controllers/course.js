@@ -1,7 +1,11 @@
 const Course = require('../models/courses');
 
 const course_create = async (req,res) => {
-    const course = new Course(req.body);
+    //const course = new Course(req.body);
+    const course = new Course({
+        ...req.body,
+        instructor: req.user._id
+    })
     try {
         await course.save();
         res.status(201).json({
@@ -18,7 +22,7 @@ const course_create = async (req,res) => {
 
 const course_delete = async (req, res) => {
     try {
-        const course = await Course.findOneAndDelete({name: req.params.name});
+        const course = await Course.findOneAndDelete({_id: req.params.id, instructor: req.user._id});
         if (!course) {
             res.status(401).json ({
                 message: "Course not found!"
@@ -60,53 +64,68 @@ const course_view = async (req, res) => {
     }
 };
 
-const course_viewByName = async (req, res) => {
+//view courses user is enrolled in
+const course_viewEnrolledIn = async (req, res) => {
     try {
-        const courseByName = await Course.find({name: req.params.name}).populate('enrolled');
-        if (courseByName.length == 0) {
+        await req.user.populate('courses').execPopulate();
+        res.send(req.user.courses);
+    }
+    catch (err) {
+        res.status(400).json({
+            messade: err.message
+        });
+    }
+};
+
+//view courses created by instructor
+const course_viewById = async (req, res) => {
+    try {
+        //const courseByName = await Course.find({name: req.params.name}).populate('enrolled');
+        const courseById = await Course.findOne({ _id, instructor: req.user._id });
+        if (!courseById) {
             res.status(404).json({
                 message: "Course not found!"
             });
         }
         else {
             res.status(201).json({
-                mesage: "Course found!",
+                message: "Course found!",
                 data: courseByName
             });
         }
     }
     catch(err) {
-        res.status(400).json({
+        res.status(500).json({
             message: err.message
         });
     }
 };
 
-const course_viewByInstructor = async (req, res) => {
-    try {
-        const courseByInstructor = await Course.find({instructor: req.params.instructor}).populate('enrolled');
-        if (courseByInstructor.length == 0) {
-            res.status(404).json({
-                message: "Course not found!"
-            });
-        }
-        else {
-            res.status(201).json({
-                mesage: "Course found!",
-                data: courseByInstructor
-            });
-        }  
-    }
-    catch(err) {
-        res.status(400).json({
-            message: err.message
-        });
-    }
-};
+// const course_viewByInstructor = async (req, res) => {
+//     try {
+//         const courseByInstructor = await Course.find({instructor: req.params.instructor}).populate('enrolled');
+//         if (courseByInstructor.length == 0) {
+//             res.status(404).json({
+//                 message: "Course not found!"
+//             });
+//         }
+//         else {
+//             res.status(201).json({
+//                 mesage: "Course found!",
+//                 data: courseByInstructor
+//             });
+//         }  
+//     }
+//     catch(err) {
+//         res.status(400).json({
+//             message: err.message
+//         });
+//     }
+// };
 
 const course_update = async (req, res) => {
     try {
-        const course = await User.findOneAndUpdate({name: req.params.name}, req.body, {new: true});
+        const course = await User.findOneAndUpdate({name: req.params.name}, req.body, {new: true}).populate('enrolled').execPopulate();
         if (!user) {
             res.status(404).json({
                 message: "Course not found!"
@@ -130,7 +149,8 @@ module.exports = {
     course_create,
     course_delete,
     course_view,
-    course_viewByName,
-    course_viewByInstructor,
+    course_viewEnrolledIn,
+    course_viewById,
+    //course_viewByInstructor,
     course_update
 };

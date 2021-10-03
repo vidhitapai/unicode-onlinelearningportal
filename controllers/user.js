@@ -78,18 +78,6 @@ const user_update = async (req, res) => {
 
 const user_delete = async (req, res) => {
     try {
-        // const user = await User.findOneAndDelete({email: req.user._id});
-        // if (!email) {
-        //     res.status(401).json ({
-        //         message: "User not found!"
-        //     });
-        // }
-        // else if (email) {
-        //     res.status(201).json({
-        //         message: "User successfully deleted!",
-        //         data: req.user
-        //     });
-        // }   
         await req.user.remove();
         res.send(req.user);
     }
