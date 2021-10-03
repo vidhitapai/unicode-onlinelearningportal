@@ -46,6 +46,13 @@ const userSchema = new mongoose.Schema({
     }]
 });
 
+//establish relationship between 2 models for mongoose, not in db
+userSchema.virtual('courses', {
+    ref: 'Course',
+    localField: '_id',
+    foreignField: 'instructor'
+})
+
 //generating tokens for authentication, accessible on instances
 userSchema.methods.generateAuthToken = async function () {
     const user = this;
@@ -90,6 +97,13 @@ userSchema.pre('save', async function (next) {
     if (user.isModified('password')) {
         user.password = await bcrypt.hash(user.password, 8);
     }
+    next();
+})
+
+//delete courses when instructor is deleted
+userSchema.pre('remove', async function (next) {
+    const user = this;
+    await Course.deleteMany( { instructor: user._id });
     next();
 })
 

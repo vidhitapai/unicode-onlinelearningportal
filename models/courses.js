@@ -8,8 +8,9 @@ const schema = new mongoose.Schema({
         trim: true
     },
     instructor: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
     },
     rating: Number,
     courseType: {
