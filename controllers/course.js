@@ -1,4 +1,6 @@
 const Course = require('../models/courses');
+const multer = require('multer');
+const sharp = require('sharp');
 
 const course_create = async (req,res) => {
     //const course = new Course(req.body);
@@ -14,6 +16,62 @@ const course_create = async (req,res) => {
         });
     }
     catch(err) {
+        res.status(400).json({
+            message: err.message
+        });
+    }
+};
+
+exports.upload_file =  multer({
+    limits: {
+      fileSize: 10000000
+    },
+    fileFilter(req, file, callback) {
+        if(!file.originalname.match(/\.pdf|doc|docx|odt|ppt/)) {
+            return callback(new Error('Please upload the correct file format!'));
+        }
+        callback(undefined, true);
+    }
+});
+
+exports.upload_video =  multer({
+    limits: {
+      fileSize: 500000000
+    },
+    fileFilter(req, file, callback) {
+        if(!file.originalname.match(/\.mp4|mkv|mpeg/)) {
+            return callback(new Error('Please upload the correct file format!'));
+        }
+        callback(undefined, true);
+    }
+});
+
+const course_upload_file = async (req, res) => {
+    try {
+        const buffer = await sharp(req.file.buffer).toBuffer();
+        req.course.file = buffer;
+        await req.course.save();
+        res.json({
+            success: true
+        });
+    }
+    catch (err) {
+        res.status(400).json({
+            message: err.message
+        });
+    }
+};
+
+const course_upload_video = async (req, res) => {
+    try {
+        const buffer = await sharp(req.file.buffer).toBuffer();
+        req.course.video = buffer;
+        await req.course.save();
+        res.json({
+            success: true
+        });
+    }
+    catch (err) {
         res.status(400).json({
             message: err.message
         });
@@ -147,6 +205,8 @@ const course_update = async (req, res) => {
 
 module.exports = {
     course_create,
+    course_upload_file,
+    course_upload_video,
     course_delete,
     course_view,
     course_viewEnrolledIn,

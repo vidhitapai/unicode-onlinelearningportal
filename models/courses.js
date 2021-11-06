@@ -25,7 +25,13 @@ const schema = new mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'User',
         default: []
-    }
+    },
+    file: [{
+        type: Buffer
+    }],
+    video: [{
+        type: Buffer
+    }]
 });
 
 const Course = mongoose.model('Course', schema);
