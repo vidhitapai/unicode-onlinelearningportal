@@ -1,4 +1,6 @@
 const User = require('../models/users');
+const multer = require('multer');
+const sharp = require('sharp');
 
 const user_create = async (req, res) => {
     const user = new User(req.body);
@@ -11,6 +13,34 @@ const user_create = async (req, res) => {
         });
     }
     catch(err) {
+        res.status(400).json({
+            message: err.message
+        });
+    }
+};
+
+exports.upload =  multer({
+    limits: {
+      fileSize: 1500000
+    },
+    fileFilter(req, file, callback) {
+        if(!file.originalname.match(/\.jpg|jpeg|png/)) {
+            return callback(new Error('Please upload the correct file format!'));
+        }
+        callback(undefined, true);
+    }
+});
+
+const user_upload_profilePicture = async (req, res) => {
+    try {
+        const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
+        req.user.profilePicture = buffer;
+        await req.user.save();
+        res.json({
+            success: true
+        });
+    }
+    catch (err) {
         res.status(400).json({
             message: err.message
         });
@@ -177,6 +207,7 @@ const user_view = async (req, res) => {
 
 module.exports = {
     user_create,
+    user_upload_profilePicture,
     user_login,
     user_logout,
     user_logoutOfAll,

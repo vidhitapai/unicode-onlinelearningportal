@@ -5,6 +5,7 @@ const auth = require('../middleware/auth');
 const router = new express.Router();
 
 router.post('/createuser', userController.user_create);
+router.post('/profilePicture', auth, userController.upload.single('profilePicture'), userController.user_upload_profilePictureVVVVVV);
 router.post('/login', userController.user_login);
 router.post('/logout', auth, userController.user_logout);
 router.post('/logoutAll', auth, userController.user_logoutOfAll);
