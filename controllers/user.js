@@ -19,7 +19,7 @@ const user_create = async (req, res) => {
     }
 };
 
-exports.upload =  multer({
+const upload =  multer({
     limits: {
       fileSize: 1500000
     },
@@ -207,6 +207,7 @@ const user_view = async (req, res) => {
 
 module.exports = {
     user_create,
+    upload,
     user_upload_profilePicture,
     user_login,
     user_logout,

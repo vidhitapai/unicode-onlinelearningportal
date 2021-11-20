@@ -1,6 +1,5 @@
 const Course = require('../models/courses');
 const multer = require('multer');
-const sharp = require('sharp');
 
 const course_create = async (req,res) => {
     //const course = new Course(req.body);
@@ -22,7 +21,15 @@ const course_create = async (req,res) => {
     }
 };
 
-exports.upload_file =  multer({
+const fileStorage = multer.diskStorage({
+    destination: '../uploads/files',
+    filename: (req, file, callback) => {
+        callback(null, file.fieldname + '_' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const uploadFile =  multer({
+    storage: fileStorage,
     limits: {
       fileSize: 10000000
     },
@@ -34,7 +41,15 @@ exports.upload_file =  multer({
     }
 });
 
-exports.upload_video =  multer({
+const videoStorage = multer.diskStorage({
+    destination: '../uploads/videos', 
+    filename: (req, file, callback) => {
+        callback(null, file.fieldname + '_' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const uploadVideo =  multer({
+    storage: videoStorage,
     limits: {
       fileSize: 500000000
     },
@@ -48,12 +63,7 @@ exports.upload_video =  multer({
 
 const course_upload_file = async (req, res) => {
     try {
-        const buffer = await sharp(req.file.buffer).toBuffer();
-        req.course.file = buffer;
-        await req.course.save();
-        res.json({
-            success: true
-        });
+        res.send(req.files);
     }
     catch (err) {
         res.status(400).json({
@@ -64,12 +74,7 @@ const course_upload_file = async (req, res) => {
 
 const course_upload_video = async (req, res) => {
     try {
-        const buffer = await sharp(req.file.buffer).toBuffer();
-        req.course.video = buffer;
-        await req.course.save();
-        res.json({
-            success: true
-        });
+        res.send(req.files);
     }
     catch (err) {
         res.status(400).json({
@@ -205,6 +210,8 @@ const course_update = async (req, res) => {
 
 module.exports = {
     course_create,
+    uploadFile,
+    uploadVideo,
     course_upload_file,
     course_upload_video,
     course_delete,
