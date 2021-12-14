@@ -1,4 +1,5 @@
 const Course = require('../models/courses');
+const multer = require('multer');
 
 const course_create = async (req,res) => {
     //const course = new Course(req.body);
@@ -14,6 +15,68 @@ const course_create = async (req,res) => {
         });
     }
     catch(err) {
+        res.status(400).json({
+            message: err.message
+        });
+    }
+};
+
+const fileStorage = multer.diskStorage({
+    destination: '../uploads/files',
+    filename: (req, file, callback) => {
+        callback(null, file.fieldname + '_' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const uploadFile =  multer({
+    storage: fileStorage,
+    limits: {
+      fileSize: 10000000
+    },
+    fileFilter(req, file, callback) {
+        if(!file.originalname.match(/\.pdf|doc|docx|odt|ppt/)) {
+            return callback(new Error('Please upload the correct file format!'));
+        }
+        callback(undefined, true);
+    }
+});
+
+const videoStorage = multer.diskStorage({
+    destination: '../uploads/videos', 
+    filename: (req, file, callback) => {
+        callback(null, file.fieldname + '_' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const uploadVideo =  multer({
+    storage: videoStorage,
+    limits: {
+      fileSize: 500000000
+    },
+    fileFilter(req, file, callback) {
+        if(!file.originalname.match(/\.mp4|mkv|mpeg/)) {
+            return callback(new Error('Please upload the correct file format!'));
+        }
+        callback(undefined, true);
+    }
+});
+
+const course_upload_file = async (req, res) => {
+    try {
+        res.send(req.files);
+    }
+    catch (err) {
+        res.status(400).json({
+            message: err.message
+        });
+    }
+};
+
+const course_upload_video = async (req, res) => {
+    try {
+        res.send(req.files);
+    }
+    catch (err) {
         res.status(400).json({
             message: err.message
         });
@@ -147,6 +210,10 @@ const course_update = async (req, res) => {
 
 module.exports = {
     course_create,
+    uploadFile,
+    uploadVideo,
+    course_upload_file,
+    course_upload_video,
     course_delete,
     course_view,
     course_viewEnrolledIn,
