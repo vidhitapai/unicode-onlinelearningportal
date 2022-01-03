@@ -1,10 +1,8 @@
 const express = require('express');
 const app = express();
-require('./connection');
-// const dotenv = require("dotenv");
+const dotenv = require("dotenv").config();
+const db = require('./connection');
 
-// accessing the environment variables
-// dotenv.config();
 
 const courseRouter = require('./routers/courseRoutes');
 const userRouter = require('./routers/userRoutes');
