@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const dotenv = require('dotenv').config();
 
 const connectionParameters = {
     useNewUrlParser: true,
@@ -6,7 +7,7 @@ const connectionParameters = {
     useUnifiedTopology: true
 };
 
-const url = 'mongodb+srv://primehide:maximus@cluster0.tq0vb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+const url = process.env.MONGODB_URL;
 
 const connection = mongoose.connect(url, connectionParameters)
     .then(() => console.log("Connected to database!"))
