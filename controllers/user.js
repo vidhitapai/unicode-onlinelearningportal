@@ -6,10 +6,10 @@ const user_create = async (req, res) => {
     const user = new User(req.body);
     try {
         await user.save();
-        const token = await user.generateAuthToken();
+        const token = await User.generateAuthToken(user._id);
         res.status(201).json({
             message:"User successfully created!",
-            data: user
+            data: user._id
         });
     }
     catch(err) {
@@ -49,12 +49,14 @@ const user_upload_profilePicture = async (req, res) => {
 
 const user_login = async (req, res) => {
     try {
-        const user = await user.findByCredentials(req.body.email, req.body.password)
-        const token = await generateAuthToken();
+        const user = await User.findByCredentials(req.body.email, req.body.password);
+        const token = await User.generateAuthToken(user._id);
         res.send({ user, token });
     }
     catch(err) {
-        res.status(400).send()
+        res.status(400).json({
+            message: err.message
+        })
     }
 };
 
@@ -67,7 +69,7 @@ const user_logout = async (req, res) => {
         res.send('Successfully logged out!');
     }
     catch (err) {
-        res.status(500),send();
+        res.status(500).send();
     }
 };
 

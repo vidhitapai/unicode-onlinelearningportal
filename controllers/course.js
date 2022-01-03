@@ -1,12 +1,10 @@
 const Course = require('../models/courses');
 const multer = require('multer');
 
-const course_create = async (req,res) => {
+const course_create = async (req, res) => {
     //const course = new Course(req.body);
-    const course = new Course({
-        ...req.body,
-        instructor: req.user._id
-    })
+    console.log(req.body);
+    const course = new Course(req.body);
     try {
         await course.save();
         res.status(201).json({

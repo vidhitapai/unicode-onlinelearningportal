@@ -61,8 +61,8 @@ userSchema.virtual('courses', {
 })
 
 //generating tokens for authentication, accessible on instances
-userSchema.methods.generateAuthToken = async function () {
-    const user = this;
+userSchema.statics.generateAuthToken = async (userid) => {
+    const user = await User.findById(userid);
     const token = jwt.sign({ _id: user._id.toString() }, 'justinvisiblethings');
     
     //saving token for each user 
@@ -80,7 +80,7 @@ userSchema.methods.toJSON = function () {
     delete userDisplayObject.password;
     delete userDisplayObject.tokens;
 
-    return userObject;
+    return userDisplayObject;
 }
 
 //checking the credentials before logging in, accessible on models
