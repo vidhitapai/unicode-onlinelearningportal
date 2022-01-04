@@ -32,7 +32,8 @@ app.use((error, req, res, next) => {
     });
 });
 
-app.listen(port, () => {
+const servers = app.listen(port, () => {
     console.log('Server is active!')
 });
 
+module.exports = servers;
