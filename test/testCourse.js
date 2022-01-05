@@ -149,3 +149,19 @@ describe('Upload document', () => {
         })
     })
   })
+
+  describe('View courses enrolled in', () => {
+    it('should display all the courses a user is enrolled in', (done) => {
+      let utokens = user.tokens;
+      chai
+        .request(app)
+        .get('/courses/view/enrolled')
+        .set('Authorization', `Bearer ${utokens[0].token}`)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.have.property('message');
+          res.body.should.have.property('data');
+          done();
+        })
+    })
+  })
