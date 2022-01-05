@@ -3,7 +3,6 @@ const multer = require('multer');
 
 const course_create = async (req, res) => {
     //const course = new Course(req.body);
-    console.log(req.body);
     const course = new Course(req.body);
     try {
         await course.save();
@@ -20,9 +19,9 @@ const course_create = async (req, res) => {
 };
 
 const fileStorage = multer.diskStorage({
-    destination: '../uploads/files',
+    destination: '../public/uploads/documents/',
     filename: (req, file, callback) => {
-        callback(null, file.fieldname + '_' + Date.now() + path.extname(file.originalname));
+        callback(null, file.fieldname + '_' + Date.now());
     }
 });
 
@@ -40,9 +39,9 @@ const uploadFile =  multer({
 });
 
 const videoStorage = multer.diskStorage({
-    destination: '../uploads/videos', 
+    destination: '../public/uploads/videos', 
     filename: (req, file, callback) => {
-        callback(null, file.fieldname + '_' + Date.now() + path.extname(file.originalname));
+        callback(null, file.fieldname + '_' + Date.now());
     }
 });
 
@@ -61,7 +60,9 @@ const uploadVideo =  multer({
 
 const course_upload_file = async (req, res) => {
     try {
-        res.send(req.files);
+        res.status(200).json({
+            message: 'Document uploaded successfully'
+        });
     }
     catch (err) {
         res.status(400).json({
@@ -72,7 +73,9 @@ const course_upload_file = async (req, res) => {
 
 const course_upload_video = async (req, res) => {
     try {
-        res.send(req.files);
+        res.status(200).json({
+            message: 'Video uploaded successfully'
+        });
     }
     catch (err) {
         res.status(400).json({
@@ -83,16 +86,16 @@ const course_upload_video = async (req, res) => {
 
 const course_delete = async (req, res) => {
     try {
-        const course = await Course.findOneAndDelete({_id: req.params.id, instructor: req.user._id});
+        const course = await Course.findByIdAndDelete(req.params.id);
         if (!course) {
             res.status(401).json ({
                 message: "Course not found!"
             });
         }
         else if (course) {
-            res.status(201).json({
-                message: "Course successfully deleted!",
-                data: course
+            res.status(200).json({
+                message: "Course successfully deleted!"
+                //data: course
             });
         }
     }
@@ -186,13 +189,13 @@ const course_viewById = async (req, res) => {
 
 const course_update = async (req, res) => {
     try {
-        const course = await User.findOneAndUpdate({name: req.params.name}, req.body, {new: true}).populate('enrolled').execPopulate();
-        if (!user) {
+        const course = await Course.findByIdAndUpdate(req.params.id, req.body, {new: true}).populate('enrolled');
+        if (!course) {
             res.status(404).json({
                 message: "Course not found!"
             });
         }
-        else if (user) {
+        else if (course) {
             res.status(200).json({
                 message: "Course found!",
                 data: course
