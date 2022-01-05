@@ -34,11 +34,16 @@ const upload =  multer({
 
 const user_upload_profilePicture = async (req, res) => {
     try {
+        const token = req.header('Authorization').replace('Bearer ', '');
+        const decoded = jwt.verify(token, process.env.JWT_KEY);
+        const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
+
         const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
-        req.user.profilePicture = buffer;
-        await req.user.save();
-        res.json({
-            success: true
+        user.profilePicture = buffer;
+        await user.save();
+        res.status(200).json({
+            success: true,
+            message: 'Picture uploaded successfully'
         });
     }
     catch (err) {
@@ -175,7 +180,21 @@ const user_delete = async (req, res) => {
 
 //displaying authenticated user's profile
 const user_view = async (req, res) => {
-    res.send(req.user);
+    try {
+        const token = req.header('Authorization').replace('Bearer ', '');
+        const decoded = jwt.verify(token, process.env.JWT_KEY);
+        const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
+
+        res.status(200).json({
+            message: 'User displayed',
+            data: user
+        });
+    } catch(error) {
+        res.status(400).json({
+            message:error.message
+        });
+    }
+    
 };
 
 // const user_viewByName = async (req, res) => {
