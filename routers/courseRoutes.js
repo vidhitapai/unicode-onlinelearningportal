@@ -22,7 +22,7 @@ router.post('/course-upload-file', [auth.JWTauth, auth.checkUserType], uploadFil
 router.post('/course-upload-video', [auth.JWTauth, auth.checkUserType], uploadVideo.single('video'), course_upload_video);
 router.delete('/deletecourse/:id', [auth.JWTauth, auth.checkUserType], course_delete);
 router.get('/view', course_view);
-router.get('/view/enrolled', [auth.JWTauth, auth.checkUserType], course_viewEnrolledIn);
+router.get('/view/enrolled', auth.JWTauth, course_viewEnrolledIn);
 router.get('/view/:id', course_viewById);
 router.get('/viewinstructor', [auth.JWTauth, auth.checkUserType], course_viewByInstructor);
 router.put('/updatecourse/:id', [auth.JWTauth, auth.checkUserType], course_update);

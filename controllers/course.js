@@ -133,12 +133,24 @@ const course_view = async (req, res) => {
 //view courses user is enrolled in
 const course_viewEnrolledIn = async (req, res) => {
     try {
-        await req.user.populate('courses').execPopulate();
-        res.send(req.user.courses);
+        const token = req.header('Authorization').replace('Bearer ', '');
+        const decoded = jwt.verify(token, process.env.JWT_KEY);
+        const user = await User.findOne({ _id: decoded._id, 'tokens.token': token }).populate('enrolledIn');
+
+        if(user.enrolledIn.length === 0) {
+            res.status(404).json({
+                message: 'No courses found'
+            });
+        } else {
+            res.status(200).json({
+                message: 'Courses successfully displayed',
+                data: user.enrolledIn
+            });
+        }
     }
     catch (err) {
         res.status(400).json({
-            messade: err.message
+            message: err.message
         });
     }
 };
