@@ -1,5 +1,7 @@
 const Course = require('../models/courses');
+const User = require('../models/users');
 const multer = require('multer');
+const jwt = require('jsonwebtoken');
 
 const course_create = async (req, res) => {
     //const course = new Course(req.body);
@@ -111,12 +113,12 @@ const course_view = async (req, res) => {
         const viewCourse = await Course.find({}).populate('enrolled');
         if (viewCourse.length == 0) {
             res.status(404).json({
-                message: "Course not found!"
+                message: "Courses not found!"
             });
         }
         else {
-            res.status(201).json({
-                message: "Course found!",
+            res.status(200).json({
+                message: "Courses found!",
                 data: viewCourse
             });
         } 
@@ -142,25 +144,50 @@ const course_viewEnrolledIn = async (req, res) => {
 };
 
 //view courses created by instructor
-const course_viewById = async (req, res) => {
+const course_viewByInstructor = async (req, res) => {
     try {
-        //const courseByName = await Course.find({name: req.params.name}).populate('enrolled');
-        const courseById = await Course.findOne({ _id, instructor: req.user._id });
+        const token = req.header('Authorization').replace('Bearer ', '');
+        const decoded = jwt.verify(token, process.env.JWT_KEY);
+        const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
+        
+        const courseById = await Course.find({instructor: user._id});
         if (!courseById) {
-            res.status(404).json({
+            res.status(400).json({
                 message: "Course not found!"
             });
         }
         else {
-            res.status(201).json({
+            res.status(200).json({
                 message: "Course found!",
-                data: courseByName
+                data: courseById
             });
         }
     }
     catch(err) {
-        res.status(500).json({
+        res.status(400).json({
             message: err.message
+        });
+    }
+};
+
+
+//view course by id
+const course_viewById = async (req, res) => {
+    try {
+        const course = await Course.findById(req.params.id);
+        if (!course) {
+            res.status(404).json({
+                message: "Course not found!"
+            });
+        } else {
+            res.status(200).json({
+                message: "Course found!",
+                data: course
+            });
+        }
+    } catch(error) {
+        res.status(400).json({
+            message: error.message
         });
     }
 };
@@ -218,7 +245,7 @@ module.exports = {
     course_delete,
     course_view,
     course_viewEnrolledIn,
+    course_viewByInstructor,
     course_viewById,
-    //course_viewByInstructor,
     course_update
 };
