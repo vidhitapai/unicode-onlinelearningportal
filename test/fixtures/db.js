@@ -16,6 +16,7 @@ const user = {
     email: "johndoe@gmail.com",
     password: "iamjohndoe",
     userType: "INSTRUCTOR",
+    enrolledIn: courseID,
     tokens: [{token: jwt.sign({ _id: userID.toString() }, process.env.JWT_KEY)}]
 };
 
