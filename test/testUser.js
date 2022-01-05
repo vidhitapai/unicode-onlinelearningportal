@@ -110,7 +110,7 @@ describe('User Delete', () => {
             .request(app)
             .delete('/users/delete/self')
             .set('Authorization', `Bearer ${utokens[0].token}`)
-            .end((err,res) => {
+            .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.have.property('message')
                 done();
@@ -118,3 +118,35 @@ describe('User Delete', () => {
     })
 })
 
+describe('Upload profile picture', () => {
+  it('should upload profile picture', (done) => {
+    let utokens = user.tokens;
+    chai
+      .request(app)
+      .post('/users/profilePicture')
+      .set('Authorization', `Bearer ${utokens[0].token}`)
+      .attach('profilePicture', ('C:/Users/optimus/Desktop/pfp.jpg'))
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.have.property('success').eql(true);
+        res.body.should.have.property('message');
+        done();
+      })
+  })
+})
+
+describe('View user', () => {
+  it('should display user details', (done) => {
+    let utokens = user.tokens;
+    chai
+      .request(app)
+      .get('/users/view/self')
+      .set('Authorization', `Bearer ${utokens[0].token}`)
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.body.should.have.property('message');
+        res.body.should.be.a('object');
+        done();
+      })
+  })
+})
