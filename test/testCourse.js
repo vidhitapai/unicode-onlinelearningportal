@@ -101,3 +101,51 @@ describe('Upload document', () => {
         })
     })
   })
+
+  describe('View all courses', () => {
+    it('should display all courses', (done) => {
+      let utokens = user.tokens;
+      chai
+        .request(app)
+        .get('/courses/view')
+        .set('Authorization', `Bearer ${utokens[0].token}`)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.have.property('message');
+          res.body.should.have.property('data');
+          done();
+        })
+    })
+  })
+
+  describe('View courses created by instructor', () => {
+    it('should display courses created by specific instructor', (done) => {
+      let utokens = user.tokens;
+      chai
+        .request(app)
+        .get('/courses/viewinstructor')
+        .set('Authorization', `Bearer ${utokens[0].token}`)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.have.property('message');
+          res.body.should.have.property('data');
+          done();
+        })
+    }) 
+  })
+
+  describe('View particular course', () => {
+    it('should display particular course by id', (done) => {
+      let utokens = user.tokens;
+      chai
+        .request(app)
+        .get(`/courses/view/${course._id}`)
+        .set('Authorization', `Bearer ${utokens[0].token}`)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.have.property('message');
+          res.body.should.have.property('data');
+          done();
+        })
+    })
+  })
